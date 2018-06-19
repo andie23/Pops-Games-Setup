@@ -1,16 +1,19 @@
 ############################################################################################################################
 # Author: Andrew Mfune
 # Date: 18/06/2018
-# Descriptions: Batch converts PlayStation One(PS1) bin Files 
-#               to VCD using CUE2POP. Program also auto renames and duplicates
-#               POPSTARTER.ELF with the name of the VCD in the destination folder.
-#               The name contains prefix "XX" at the beginning of the filename.
+# Descriptions: This program converts entire batches of PlayStation One(PSX) 
+#               bin files to VCDs through CUE2POPS conversion tool. It also
+#               creates a copy of POPSTARTER.ELF with the name of the VCD along with 
+#               optional prefixes XX or SB provided by the user.
 # Usage:
 #      run the following command inside a terminal: 
-#           auto_pop_bin.py "Drive:\[INSERT SOURCE DIRECTORY PATH HERE]" "DRIVE:\[INSERT DESTINATION DIRECTORY PATH HERE]"
+#           auto_pop_bin.py "Drive:\[INSERT SOURCE DIRECTORY PATH HERE]" 
+#                           "DRIVE:\[INSERT DESTINATION DIRECTORY PATH HERE] 
+#                           "[INSERT PREFIX "XX" or "SB"]" (optional)
 # Note:
-#     1. Make sure to download and place CUE2POP conversion tool in the same directory as the script
-#     2. POPSTARTER.ELF must also be in the same directory as the script.
+#     1. Make sure to download and place CUE2POPS conversion tool in the same directory as the script
+#     2. POPSTARTER.ELF must also be in the same directory as the script. If the POPSTARTER file is a USB edition, 
+#        the optional prefix argument should be XX or if its SMB edition, the prefix should be SB.
 #     3. Only bin file images are supported
 #############################################################################################################################
 import os
@@ -104,7 +107,7 @@ def getBinName(cue, directory):
             print ('Bin does not exist! ignoring....')
 
 def convertBinToVcd(cueFile, destPath, binName):
-    cue2PopsEXE = os.path.join(os.curdir, 'CUE2POPS_2_3.exe')
+    cue2PopsEXE = os.path.join(os.curdir, 'CUE2POPS.exe')
     vcdName = '%s.VCD' % binName.strip()
 
     if vcdName in os.listdir(destPath):
