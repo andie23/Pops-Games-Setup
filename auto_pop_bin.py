@@ -22,15 +22,20 @@ def main():
     sys.argv
 
     if len(sys.argv) >= 2:
-        source = sys.argv[1]
-        dest = sys.argv[2]
-
         try:
+            source = validatePath(sys.argv[1])
+            dest = validatePath(sys.argv[2])
             processBinDumps(source, dest)
         except Exception as error:
             print(error)
     else:
         print('Source and destination directory arguments not provided...')
+
+def validatePath(dirPath):
+    if not os.path.exists(dirPath):
+        raise Exception('Directory "%s" is not valid or does not exist' % dirPath)
+    
+    return dirPath
 
 def processBinDumps(source, dest):
     print('Scanning for cuesheets in %s.....' % source)
