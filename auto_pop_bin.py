@@ -38,9 +38,9 @@ def validatePath(dirPath):
     
     return dirPath
 
-def processBinDumps(source, dest):
-    print('Scanning for cuesheets in %s.....' % source)
-    cues = getCueSheets(source)
+def processBinDumps(sourceDir, destDir):
+    print('Scanning for cuesheets in %s.....' % sourceDir)
+    cues = getCueSheets(sourceDir)
 
     if not cues:
         raise Exception('Cue files not found')
@@ -49,18 +49,18 @@ def processBinDumps(source, dest):
 
     for cue in cues:
         print('Processing cue: %s' % cue)
-        cbin = getBinName(cue, source)
+        cbin = getBinName(cue, sourceDir)
         
         if not cbin:
             continue
 
-        cueFile = os.path.join(source, cue)
+        cueFile = os.path.join(sourceDir, cue)
 
-        if convertBinToVcd(cueFile, dest, cbin) == 1:
-            createPopStarterCopy(cbin, dest)
+        if convertBinToVcd(cueFile, destDir, cbin) == 1:
+            createPopStarterCopy(cbin, destDir)
             continue
-        
-        print('ElF file not created...')
+
+        print('POPSTARTER.ElF copy was not created...')
 
 def getCueSheets(directory):
     files = os.listdir(directory)
