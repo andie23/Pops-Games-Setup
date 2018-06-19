@@ -25,12 +25,25 @@ def main():
         try:
             sourceDir = validatePath(sys.argv[1])
             destDir = validatePath(sys.argv[2])
+            elfPrefix = 'XX'
+            
+            if len(sys.argv) > 3:
+                elfPrefix = validateElfPrefix(sys.argv[3])
 
-            processBinDumps(sourceDir, destDir)
+            processBinDumps(sourceDir, destDir, elfPrefix)
         except Exception as error:
             print(error)
     else:
         print('Provide Source and Destination paths....')
+
+def validateElfPrefix(prefix):
+    validPrefixes = ['XX', 'SB']
+    prefix = prefix.upper().strip()
+    
+    if prefix not in validPrefixes:
+        raise Exception('Invalid Elf prefix %s' % prefix)
+
+    return prefix 
 
 def validatePath(dirPath):
     if not os.path.exists(dirPath):
@@ -38,7 +51,7 @@ def validatePath(dirPath):
     
     return dirPath
 
-def processBinDumps(sourceDir, destDir):
+def processBinDumps(sourceDir, destDir, elfPrefix):
     print('Scanning for cuesheets in %s.....' % sourceDir)
     cues = getCueSheets(sourceDir)
 
@@ -57,7 +70,7 @@ def processBinDumps(sourceDir, destDir):
         cueFile = os.path.join(sourceDir, cue)
 
         if convertBinToVcd(cueFile, destDir, cbin) == 1:
-            createPopStarterCopy(cbin, destDir)
+            createPopStarterCopy(cbin, destDir, elfPrefix)
             continue
 
         print('POPSTARTER.ElF copy was not created...')
@@ -102,7 +115,6 @@ def convertBinToVcd(cueFile, destPath, binName):
     cue2PopProcess = subprocess.call([cue2PopsEXE, cueFile, vcdName])
 
     if cue2PopProcess == 1:
-        print('Checking generated VCD...')
         vcdFile = os.path.join(os.curdir, vcdName)
 
         if os.path.exists(vcdFile): 
@@ -115,9 +127,9 @@ def convertBinToVcd(cueFile, destPath, binName):
 
     return 0
 
-def createPopStarterCopy(name, destDir):
+def createPopStarterCopy(name, destDir, elfPrefix):
     popStarter = os.path.join(os.curdir, 'POPSTARTER.ELF')
-    fileName = 'XX.%s.ELF' % name.strip()
+    fileName = '%s.%s.ELF' % (elfPrefix, name.strip())
    
     destFilePath = os.path.join(destDir, fileName) 
    
