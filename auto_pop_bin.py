@@ -23,13 +23,14 @@ def main():
 
     if len(sys.argv) >= 2:
         try:
-            source = validatePath(sys.argv[1])
-            dest = validatePath(sys.argv[2])
-            processBinDumps(source, dest)
+            sourceDir = validatePath(sys.argv[1])
+            destDir = validatePath(sys.argv[2])
+
+            processBinDumps(sourceDir, destDir)
         except Exception as error:
             print(error)
     else:
-        print('Source and destination directory arguments not provided...')
+        print('Provide Source and Destination paths....')
 
 def validatePath(dirPath):
     if not os.path.exists(dirPath):
@@ -50,23 +51,18 @@ def processBinDumps(source, dest):
         print('Processing cue: %s' % cue)
         cbin = getBinName(cue, source)
         
-        if not cBin:
-            print('Invalid Bin was found! ignoring...')
+        if not cbin:
             continue
 
         cueFile = os.path.join(source, cue)
 
-        if convertBinToVcd(cueFile, dest, cBin) == 1:
-            createPopsElf(cBin, dest)
+        if convertBinToVcd(cueFile, dest, cbin) == 1:
+            createPopStarterCopy(cbin, dest)
             continue
         
         print('ElF file not created...')
 
 def getCueSheets(directory):
-    if not directory:
-        print('Received empty directory')
-        return []
-
     files = os.listdir(directory)
     cueList = []
     
@@ -83,16 +79,16 @@ def getBinName(cue, directory):
         binDefinitionLine = cueFile.readline()
         binName = binDefinitionLine.replace('FILE', '').replace('BINARY', '').replace('"', '')
        
-        print('Found bin %s in cuesheet' % binName)
+        print('Found %s' % binName)
 
         if binName.find('.bin') < 0:
-            print('Cue has invalid Bin File')
+            print('Unsupported image file found! ignoring...')
             return ''
 
         if binName.strip() in os.listdir(directory):
             return binName.replace('.bin', '')
         else:
-            print ('Bin %s not found in %s' % (binName, directory))
+            print ('Bin does not exist! ignoring....')
 
 def convertBinToVcd(cueFile, destPath, binName):
     cue2PopsEXE = os.path.join(os.curdir, 'CUE2POPS_2_3.exe')
@@ -119,7 +115,7 @@ def convertBinToVcd(cueFile, destPath, binName):
 
     return 0
 
-def createPopsElf(name, destDir):
+def createPopStarterCopy(name, destDir):
     popStarter = os.path.join(os.curdir, 'POPSTARTER.ELF')
     fileName = 'XX.%s.ELF' % name.strip()
    
