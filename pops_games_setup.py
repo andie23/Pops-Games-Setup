@@ -122,6 +122,10 @@ def convertBinToVcd(cueFile, destPath, binName):
 
         if os.path.exists(vcdFile): 
             print('Moving VCD from temp directory to %s' % destPath)
+            # For some reason, CUE2POPS doesn't support converting 
+            # a VCD directly to a specified drive or folder... 
+            # A workaround is to move the VCD from the root folder to a specified 
+            # destination 
             shutil.move(vcdFile, destPath)    
             return 1
 
